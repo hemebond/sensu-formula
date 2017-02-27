@@ -113,11 +113,19 @@ install_{{ gem_name }}:
     {% endif %}
     - rdoc: False
     - ri: False
-    - proxy: {{ salt['pillar.get']('sensu:client:gem_proxy', None) }}
-    - source: {{ salt['pillar.get']('sensu:client:gem_source', None) }}
+
+    {%- set gem_proxy = salt['pillar.get']('sensu:client:gem_proxy', None) %}
+    {%- if gem_proxy is not none %}
+    - proxy: {{ gem_proxy }}
+    {%- endif %}
+
+    {%- set gem_source = salt['pillar.get']('sensu:client:gem_source', None) %}
+    {%- if gem_source is not none %}
+    - source: {{ gem_source }}
+    {%- endif %}
 {% endfor %}
 
-{%- if salt['pillar.get']('sensu:checks') %}
+{%- if salt['pillar.get']('sensu:checks') is not none %}
 
 sensu_checks_file:
   file.serialize:
